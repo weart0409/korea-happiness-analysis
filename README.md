@@ -1,5 +1,17 @@
 # 🇰🇷 대한민국 행복(Happiness) 데이터 분석 프로젝트
 
+<div align="center">
+
+[![Live Presentation](https://img.shields.io/badge/🌐_웹_슬라이드덱-바로_실행하기-38bdf8?style=for-the-badge&logo=googlechrome&logoColor=white)](https://weart0409.github.io/korea-happiness-analysis/)
+[![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-Active-34d399?style=for-the-badge&logo=github)](https://weart0409.github.io/korea-happiness-analysis/)
+
+### 👉 **[https://weart0409.github.io/korea-happiness-analysis/](https://weart0409.github.io/korea-happiness-analysis/)**
+*(별도 설치 없이 위 링크를 클릭하면 브라우저에서 7장 풀 슬라이드덱이 즉시 실행됩니다)*
+
+</div>
+
+---
+
 > **프로젝트 목표**: World Happiness Report 2026(WHR 2026) 데이터 및 국내외 웰빙 지표를 기반으로, 대한민국 국민의 행복도 현황과 결정 요인, 그리고 '경제적 성취 대비 낮은 행복'이라는 역설적 현상을 실증적으로 분석하고 정책적·사회적 시사점을 도출합니다.
 
 ---
