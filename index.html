@@ -2,13 +2,1157 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>대한민국 행복의 현주소와 역설</title>
-  <meta http-equiv="refresh" content="0; url=slides/index.html">
-  <script>
-    window.location.replace("slides/index.html");
-  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>대한민국 행복의 현주소와 역설: 데이터 분석 계획</title>
+  <!-- Google Fonts & Pretendard -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-primary: #0a0e17;
+      --bg-card: rgba(22, 30, 49, 0.78);
+      --bg-card-hover: rgba(30, 42, 68, 0.92);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent-blue: #38bdf8;
+      --accent-indigo: #818cf8;
+      --accent-rose: #fb7185;
+      --accent-amber: #fbbf24;
+      --accent-emerald: #34d399;
+      --font-sans: 'Noto Sans KR', 'Plus Jakarta Sans', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --transition-speed: 0.35s;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ambient Background Glow */
+    .ambient-glow {
+      position: fixed;
+      width: 650px;
+      height: 650px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, rgba(129, 140, 248, 0.05) 50%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(90px);
+      top: 10%;
+      right: 15%;
+      transition: all 0.8s ease;
+    }
+
+    /* Presentation Header */
+    .deck-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(10, 14, 23, 0.82);
+      backdrop-filter: blur(12px);
+      z-index: 50;
+    }
+
+    .project-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: -0.02em;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 10px var(--accent-emerald);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .btn-icon {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .btn-icon:hover {
+      background: rgba(255, 255, 255, 0.14);
+      color: var(--text-main);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Progress Bar */
+    .progress-container {
+      position: fixed;
+      top: 59px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.05);
+      z-index: 55;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 14.3%;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-indigo));
+      transition: width var(--transition-speed) ease;
+    }
+
+    /* Slide Deck Wrapper */
+    .deck-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      z-index: 10;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 95px 75px 85px 75px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(16px) scale(0.985);
+      transition: opacity var(--transition-speed) ease, transform var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1), visibility var(--transition-speed);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-width: 1440px;
+      margin: 0 auto;
+      right: 0;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+    }
+
+    /* Slide Titles & Typography */
+    .slide-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--accent-blue);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    .slide-title {
+      font-size: 2.7rem;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #ffffff 40%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide-subtitle {
+      font-size: 1.18rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-width: 1050px;
+      margin-bottom: 28px;
+    }
+
+    /* Card Grids */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 22px 26px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .card:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(255, 255, 255, 0.16);
+      transform: translateY(-3px);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-badge {
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-family: var(--font-mono);
+    }
+
+    .badge-rose { background: rgba(251, 113, 133, 0.15); color: var(--accent-rose); border: 1px solid rgba(251, 113, 133, 0.3); }
+    .badge-blue { background: rgba(56, 189, 248, 0.15); color: var(--accent-blue); border: 1px solid rgba(56, 189, 248, 0.3); }
+    .badge-amber { background: rgba(251, 191, 36, 0.15); color: var(--accent-amber); border: 1px solid rgba(251, 191, 36, 0.3); }
+    .badge-emerald { background: rgba(52, 211, 153, 0.15); color: var(--accent-emerald); border: 1px solid rgba(52, 211, 153, 0.3); }
+    .badge-indigo { background: rgba(129, 140, 248, 0.15); color: var(--accent-indigo); border: 1px solid rgba(129, 140, 248, 0.3); }
+
+    .card p {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* Metric Highlight Boxes */
+    .metric-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin: 10px 0;
+    }
+
+    .metric-value {
+      font-size: 2.6rem;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      color: #fff;
+      letter-spacing: -0.03em;
+    }
+
+    .metric-unit {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Table Styling */
+    .custom-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.88rem;
+    }
+
+    .custom-table th {
+      text-align: left;
+      padding: 10px 14px;
+      color: var(--text-muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-color);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+    }
+
+    .custom-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-main);
+    }
+
+    .custom-table tr:hover td {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    /* Reference Badges */
+    .ref-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(129, 140, 248, 0.15);
+      color: var(--accent-indigo);
+      border: 1px solid rgba(129, 140, 248, 0.3);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      vertical-align: middle;
+      transition: all 0.2s ease;
+    }
+
+    .ref-badge:hover {
+      background: var(--accent-indigo);
+      color: #fff;
+    }
+
+    /* Step Indicators */
+    .step-box {
+      border-left: 3px solid var(--accent-blue);
+      padding-left: 16px;
+      margin-bottom: 16px;
+    }
+
+    .step-num {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--accent-blue);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .step-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .step-desc {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Bottom Navigation Controls */
+    .deck-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 65px;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border-color);
+      background: rgba(10, 14, 23, 0.85);
+      backdrop-filter: blur(12px);
+      z-index: 50;
+    }
+
+    .slide-dots {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .dot.active {
+      width: 28px;
+      border-radius: 8px;
+      background: var(--accent-blue);
+    }
+
+    .nav-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn-nav {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-color);
+      color: #fff;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 1.1rem;
+    }
+
+    .btn-nav:hover {
+      background: rgba(255, 255, 255, 0.16);
+      transform: scale(1.05);
+    }
+
+    .counter-text {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      min-width: 60px;
+      text-align: center;
+    }
+
+    /* Modal Styling */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-card {
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      width: 90%;
+      max-width: 740px;
+      max-height: 82vh;
+      overflow-y: auto;
+      padding: 36px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .modal-close:hover {
+      color: #fff;
+    }
+
+    .key-hint {
+      display: inline-block;
+      padding: 2px 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      margin-left: 4px;
+    }
+  </style>
 </head>
-<body style="background-color: #0a0e17; color: #fff; font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0;">
-  <p>슬라이드덱으로 이동 중입니다... <a href="slides/index.html" style="color: #38bdf8;">직접 이동하기</a></p>
+<body>
+
+  <!-- Ambient Glow -->
+  <div class="ambient-glow" id="ambientGlow"></div>
+
+  <!-- Header -->
+  <header class="deck-header">
+    <div class="project-badge">
+      <div class="status-dot"></div>
+      <span>Korea Happiness Analysis &middot; Project Deck</span>
+      <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: 6px; font-weight: normal;">(WHR 2026 &amp; Long-term Panel)</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn-icon" onclick="openRefModal('all')">
+        📚 레퍼런스 색인 <span class="key-hint">R</span>
+      </button>
+      <button class="btn-icon" onclick="toggleFullscreen()">
+        ⛶ 전체화면 <span class="key-hint">F</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Progress Bar -->
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- Main Slide Deck Container -->
+  <main class="deck-container" id="deckContainer">
+
+    <!-- SLIDE 1: 타이틀 -->
+    <section class="slide active" data-index="0">
+      <span class="slide-tag">PROJECT PROPOSAL &amp; ROADMAP</span>
+      <h1 class="slide-title">대한민국 행복의 현주소와 역설</h1>
+      <p class="slide-subtitle">
+        세계행복보고서(WHR 2026) 및 장기 패널 데이터를 기반으로 한<br>
+        삶의 질 결정 요인 분석과 탐색 계획
+      </p>
+
+      <div class="grid-3" style="margin-top: 8px;">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🔍 실증적 문제 진단</span>
+            <span class="card-badge badge-rose">Problem</span>
+          </div>
+          <p>세계 10위권 경제 대국임에도 전 세계 67위에 머무는 역설적 현실과 초저출산·사회적 고립 원인 실증 탐색</p>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">📊 2대 데이터 연계</span>
+            <span class="card-badge badge-blue">Data Engine</span>
+          </div>
+          <p>WHR 2026 최신 국가별 기여도 매크로 데이터와 Kaggle 18개년 패널 데이터의 상호보완적 융합</p>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🧠 심리학적 시사점</span>
+            <span class="card-badge badge-indigo">Psychology</span>
+          </div>
+          <p>'주관적 안녕감(SWB)' 렌즈를 통해 인지적 평가와 정서적 경험의 괴리를 극복할 실천적 대안 제시</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: 배경 및 문제의식 -->
+    <section class="slide" data-index="1">
+      <span class="slide-tag">BACKGROUND &amp; CONTEXT</span>
+      <h2 class="slide-title">배경 및 문제의식: 경제적 성취 대비 낮은 행복</h2>
+      <p class="slide-subtitle">
+        ‘이스털린의 역설(Easterlin Paradox)’ <a href="#" class="ref-badge" onclick="openRefModal('REF-03')">[REF-03]</a>과 한국 사회의 구조적 그늘(초저출산·사회적 고립)
+      </p>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🇰🇷 한국 사회의 명암과 이스털린의 역설</span>
+            <span class="card-badge badge-amber">Easterlin Paradox</span>
+          </div>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 14px; font-size: 0.93rem; color: var(--text-muted); margin-top: 6px;">
+            <li style="display: flex; gap: 10px; align-items: flex-start;">
+              <span style="color: var(--accent-emerald); font-weight: bold;">✔</span>
+              <span><strong>세계 최고 수준의 인프라:</strong> 1인당 GDP 3만 5천 달러, 세계 최상위 건강 기대수명(83.6세), 세계 1위권 치안 및 디지털 인프라.</span>
+            </li>
+            <li style="display: flex; gap: 10px; align-items: flex-start;">
+              <span style="color: var(--accent-rose); font-weight: bold;">✖</span>
+              <span><strong>소득 증가와 행복의 탈동조화:</strong> 경제는 급성장했으나 삶의 만족도(Cantril Ladder)는 15년간 6.0점 안팎에서 제자리걸음(정체).</span>
+            </li>
+            <li style="display: flex; gap: 10px; align-items: flex-start;">
+              <span style="color: var(--accent-rose); font-weight: bold;">✖</span>
+              <span><strong>초저출산과 사회적 고립:</strong> 합계출산율 0.7명대, OECD 최고 자살률, "곤경에 처했을 때 기댈 사람이 없다"는 관계적 단절 심화 <a href="#" class="ref-badge" onclick="openRefModal('REF-02')">[REF-02]</a>.</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div class="card-header">
+              <span class="card-title">🎯 핵심 문제 제기</span>
+              <span class="card-badge badge-blue">Core Question</span>
+            </div>
+            <p style="margin-top: 10px; font-size: 1.05rem; line-height: 1.7; color: #e2e8f0;">
+              "한국인은 왜 세계에서 가장 빠른 속도로 물질적 풍요를 이루었음에도 불구하고, 
+              <strong>세계 최하위 수준의 사회적 지지망</strong>과 
+              <strong>극심한 성취 압박 속에서 행복의 결핍</strong>을 겪고 있는가?"
+            </p>
+          </div>
+          <div style="border-top: 1px solid var(--border-color); padding-top: 14px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.85rem; color: var(--text-muted);">이론적 배경:</span>
+            <span style="font-size: 0.85rem; color: var(--accent-indigo);">Seligman PERMA 모델 (2011) <a href="#" class="ref-badge" onclick="openRefModal('REF-04')">[REF-04]</a></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: 실측 데이터 진단 -->
+    <section class="slide" data-index="2">
+      <span class="slide-tag">EMPIRICAL DATA</span>
+      <h2 class="slide-title">실측 데이터 진단: 2025 대한민국 행복의 현주소</h2>
+      <p class="slide-subtitle">
+        WHR 2026 원본 데이터 <a href="#" class="ref-badge" onclick="openRefModal('REF-01')">[REF-01]</a>: 2025년 기준 6.040점(67위), 높은 GDP·기대수명 vs 낮은 관대함(0.089)·자유·지지
+      </p>
+
+      <div class="grid-4" style="margin-bottom: 20px;">
+        <div class="card">
+          <span style="font-size: 0.78rem; color: var(--text-muted); font-family: var(--font-mono);">2025 HAPPINESS SCORE</span>
+          <div class="metric-row">
+            <span class="metric-value" style="color: var(--accent-blue);">6.040</span>
+            <span class="metric-unit">/ 10.0</span>
+          </div>
+          <p>Cantril Ladder (3개년 평균)</p>
+        </div>
+        <div class="card">
+          <span style="font-size: 0.78rem; color: var(--text-muted); font-family: var(--font-mono);">GLOBAL RANKING</span>
+          <div class="metric-row">
+            <span class="metric-value" style="color: var(--accent-rose);">67위</span>
+            <span class="metric-unit">/ 143개국</span>
+          </div>
+          <p>2012년 41위에서 26계단 하락</p>
+        </div>
+        <div class="card">
+          <span style="font-size: 0.78rem; color: var(--text-muted); font-family: var(--font-mono);">GDP &amp; HEALTH EXP.</span>
+          <div class="metric-row">
+            <span class="metric-value" style="color: var(--accent-emerald);">1.906</span>
+          </div>
+          <p>기대수명(1.028)과 함께 세계 최상위</p>
+        </div>
+        <div class="card">
+          <span style="font-size: 0.78rem; color: var(--text-muted); font-family: var(--font-mono);">GENEROSITY &amp; SUPPORT</span>
+          <div class="metric-row">
+            <span class="metric-value" style="color: var(--accent-amber);">0.089</span>
+          </div>
+          <p>관대함 0.089, 지지 1.23 (최하위권)</p>
+        </div>
+      </div>
+
+      <!-- Tab View: Table vs Chart -->
+      <div class="card" style="padding: 16px 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+          <div style="display: flex; gap: 8px;">
+            <button id="btnViewTable" class="btn-icon" style="background: rgba(56, 189, 248, 0.2); color: #fff;" onclick="switchSlide3View('table')">📋 핵심 지표 테이블</button>
+            <button id="btnViewChart" class="btn-icon" onclick="switchSlide3View('chart')">📈 시계열 분해 차트 (Generated)</button>
+          </div>
+          <span style="font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-mono);">Source: WHR 2026 Raw Dataset (`data/raw/WHR26_Data_Figure_2.1.xlsx`)</span>
+        </div>
+
+        <div id="slide3TableView">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>연도 (Year)</th>
+                <th>전세계 순위</th>
+                <th>행복 점수</th>
+                <th>1인당 GDP 기여</th>
+                <th>사회적 지지</th>
+                <th>건강 기대수명</th>
+                <th>삶의 선택의 자유</th>
+                <th>관대함 (기부)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="font-weight: 700; background: rgba(56, 189, 248, 0.08);">
+                <td>2025 (최신)</td>
+                <td><span style="color: var(--accent-rose);">67위</span></td>
+                <td>6.040</td>
+                <td>1.906</td>
+                <td>1.230</td>
+                <td>1.028</td>
+                <td>0.825</td>
+                <td><span style="color: var(--accent-amber);">0.089</span></td>
+              </tr>
+              <tr>
+                <td>2024</td>
+                <td>58위</td>
+                <td>6.038</td>
+                <td>1.709</td>
+                <td>1.357</td>
+                <td>0.903</td>
+                <td>0.678</td>
+                <td>0.100</td>
+              </tr>
+              <tr>
+                <td>2022</td>
+                <td>57위</td>
+                <td>5.951</td>
+                <td>1.853</td>
+                <td>1.188</td>
+                <td>0.603</td>
+                <td>0.446</td>
+                <td>0.112</td>
+              </tr>
+              <tr>
+                <td>2012 (역대 최고)</td>
+                <td><span style="color: var(--accent-emerald);">41위</span></td>
+                <td>6.267</td>
+                <td colspan="5" style="color: var(--text-muted); font-size: 0.8rem;">(상대적 가족 및 공동체 유대감이 살아있던 시기)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="slide3ChartView" style="display: none; text-align: center; padding: 10px 0;">
+          <img src="outputs/figures/korea_happiness_trend.png" alt="대한민국 행복 추이 및 요인 분해" style="max-width: 100%; max-height: 350px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 8px 24px rgba(0,0,0,0.4);" />
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: 핵심 연구 질문 (3대 RQ) -->
+    <section class="slide" data-index="3">
+      <span class="slide-tag">RESEARCH DESIGN</span>
+      <h2 class="slide-title">핵심 연구 질문 (3대 RQ)</h2>
+      <p class="slide-subtitle">
+        단순 순위 비교를 넘어 구조적 불균형과 인과적 메커니즘을 밝혀내기 위한 3대 질문
+      </p>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="step-num">RESEARCH QUESTION 01</div>
+          <h3 class="card-title" style="margin-bottom: 10px; color: var(--accent-blue);">행복 결손 영역 분해</h3>
+          <p>
+            OECD 38개국 중 유사 경제 규모(1인당 GDP 3~4만 달러 구간) 선진국 대비 한국의 행복 점수는 
+            <strong>정확히 어느 하위 도메인(Factor)에서 얼마만큼의 구조적 결핍(Deficit)이 발생하는가?</strong>
+          </p>
+          <div style="margin-top: 16px; padding-top: 10px; border-top: 1px solid var(--border-color); font-size: 0.82rem; color: var(--text-muted);">
+            📌 분석 기법: Gap Analysis, 6대 요인 백분위 정규화 레이더 차트
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="step-num">RESEARCH QUESTION 02</div>
+          <h3 class="card-title" style="margin-bottom: 10px; color: var(--accent-indigo);">15개년 시계열 동학</h3>
+          <p>
+            2011년부터 2025년까지 대한민국의 실질 소득(GDP)과 기대수명은 급격히 증가했음에도 
+            <strong>왜 행복 점수는 6.0점 안팎에서 장기 정체되었으며, 요인별 탄력성은 어떻게 변화했는가?</strong>
+          </p>
+          <div style="margin-top: 16px; padding-top: 10px; border-top: 1px solid var(--border-color); font-size: 0.82rem; color: var(--text-muted);">
+            📌 분석 기법: 시계열 분해, 롤링 상관계수 추세, 구조 변화 검정
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="step-num">RESEARCH QUESTION 03</div>
+          <h3 class="card-title" style="margin-bottom: 10px; color: var(--accent-emerald);">글로벌 클러스터링</h3>
+          <p>
+            글로벌 143개국 데이터 다변량 분석 시, 
+            <strong>한국과 가장 유사한 '고소득-고수명 / 저사회적지지-저관대함' 특성을 보이는 비교 대상국은 어디인가?</strong>
+            (동아시아 국가군 vs 남유럽 비교)
+          </p>
+          <div style="margin-top: 16px; padding-top: 10px; border-top: 1px solid var(--border-color); font-size: 0.82rem; color: var(--text-muted);">
+            📌 분석 기법: K-Means Clustering, PCA 차원 축소
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: 데이터 사용 -->
+    <section class="slide" data-index="4">
+      <span class="slide-tag">DATA ECOSYSTEM</span>
+      <h2 class="slide-title">데이터 사용: WHR 2026과 장기 패널 데이터</h2>
+      <p class="slide-subtitle">
+        글로벌 거시 벤치마크(WHR 2026)와 UN 세계행복보고서(WHR)의 18년 원천 장기 패널 데이터의 상호보완적 활용 계획
+      </p>
+
+      <div class="grid-2">
+        <!-- Dataset 1: WHR 2026 -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🌐 UN World Happiness Report 2026 (WHR 2026)</span>
+            <span class="card-badge badge-blue">Macro Benchmark</span>
+          </div>
+          <div class="step-box" style="border-color: var(--accent-blue);">
+            <div class="step-title">데이터 개요 및 출처</div>
+            <div class="step-desc">
+              • 출처: UN SDSN / Gallup World Poll (`data/raw/WHR26_Data_Figure_2.1.xlsx`)<br>
+              • 규모: 전 세계 143개국 2011~2025년 시계열 관측치 (3년 이동평균 지표)
+            </div>
+          </div>
+          <div class="step-box" style="border-color: var(--accent-indigo);">
+            <div class="step-title">핵심 내용 및 활용 목적</div>
+            <div class="step-desc">
+              • 주요 내용: 0~10점 삶의 사다리(Cantril Ladder) 점수 및 회귀모형에 기반한 6대 요인 기여도(Explained by Log GDP, Social support, Healthy life, Freedom, Generosity, Corruption)<br>
+              • <strong>활용: 한국의 전 세계 최신 순위(67위) 진단 및 OECD 선진국 대비 구조적 결손 영역(Gap) 정량화</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dataset 2: Kaggle Panel -->
+        <div class="card" style="border-color: rgba(52, 211, 153, 0.35);">
+          <div class="card-header">
+            <span class="card-title">📊 Kaggle WHR 한국 장기 패널 (2005~2023)</span>
+            <span class="card-badge badge-emerald">WHR Raw Panel</span>
+          </div>
+          <div class="step-box" style="border-color: var(--accent-emerald);">
+            <div class="step-title">WHR의 18개년 공식 연도별 원천 패널 데이터</div>
+            <div class="step-desc">
+              • 출처: <code>jainaru/world-happiness-report-2024-yearly-updated</code> (Kaggle)<br>
+              • 특성: <strong>WHR 공식 보고서의 근간이 되는 갤럽 월드 폴(Gallup) 18개년 실측 원천 패널</strong>로, 한국의 2006년부터 2023년까지 매년 단일 측정된 연속 데이터 보유.
+            </div>
+          </div>
+          <div class="step-box" style="border-color: var(--accent-amber);">
+            <div class="step-title">포함된 핵심 데이터셋 및 정서 지표</div>
+            <div class="step-desc">
+              • <strong>WHR 핵심 지표 실측치:</strong> <code>Life Ladder</code>(사다리 평가), <code>Log GDP</code>(1인당 소득), <code>Social support</code>(위기 시 기댈 사람), <code>Healthy life expectancy</code>(기대수명), <code>Freedom</code>(선택의 자유), <code>Generosity</code>(기부), <code>Corruption</code>(부패 인식)<br>
+              • <strong>★ 심리적 정서 지표 완비:</strong> 일상 속 웃음과 즐거움을 측정한 <strong><code>Positive affect</code>(긍정적 정서)</strong> 및 걱정·스트레스·우울을 측정한 <strong><code>Negative affect</code>(부정적 정서)</strong>가 함께 포함되어 있어 한국인의 깊은 감정 상태를 직접 분석 가능.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: 예상 인사이트 & 심리학적 시사점 -->
+    <section class="slide" data-index="5">
+      <span class="slide-tag">INSIGHTS &amp; PSYCHOLOGY</span>
+      <h2 class="slide-title">예상 인사이트 &amp; 심리학적 시사점</h2>
+      <p class="slide-subtitle">
+        데이터 실측으로 도출할 핵심 인사이트 2개와 에드 디너의 '주관적 안녕감'으로 본 한국 사회의 시사점 1개
+      </p>
+
+      <div class="grid-3">
+        <!-- Insight 1 -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">📉 [인사이트 1] 경제와 행복의 탈동조화</span>
+            <span class="card-badge badge-blue">Empirical 1</span>
+          </div>
+          <p style="margin-bottom: 10px; color: #fff; font-weight: 600;">물질적 하드웨어 중심 성장의 한계효용 도달</p>
+          <p>
+            2011~2025년 사이 한국의 GDP 기여도는 1.25에서 1.91로 가파르게 급상승했으나, 총 행복 점수는 2012년 6.27점에서 2025년 6.04점으로 오히려 하락. 
+            소득 증가가 삶의 만족으로 직결되지 않는 <strong>이스털린의 역설이 대한민국에서 완전히 고착화</strong>되었음을 실증.
+          </p>
+        </div>
+
+        <!-- Insight 2 -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">💔 [인사이트 2] 사회적 자본의 붕괴</span>
+            <span class="card-badge badge-rose">Empirical 2</span>
+          </div>
+          <p style="margin-bottom: 10px; color: #fff; font-weight: 600;">사회적 지지(1.23)와 관대함(0.089)의 극단적 취약</p>
+          <p>
+            한국인의 행복 순위를 60위권으로 끌어내리는 진짜 원인은 돈이 아니라 <strong>"위기 시 기댈 사람이 없고, 나눌 여유가 없다"는 극단적인 각자도생과 사회적 관계망의 단절</strong>에 있음을 데이터로 확인.
+          </p>
+        </div>
+
+        <!-- Psychological Implication 3 -->
+        <div class="card" style="border-color: rgba(129, 140, 248, 0.45);">
+          <div class="card-header">
+            <span class="card-title">🧠 [시사점 3] 에드 디너의 '주관적 안녕감'으로 본 한국</span>
+            <span class="card-badge badge-indigo">SWB Lens</span>
+          </div>
+          <p style="margin-bottom: 10px; color: #fff; font-weight: 600;">"머리로는 살 만하다고 생각하지만, 마음은 왜 항상 불안할까?"</p>
+          <p>
+            행복 심리학의 창시자 에드 디너(Ed Diener)에 따르면, 진짜 행복은 <strong>"내 삶이 괜찮다고 생각하는 것(이성적 평가)"</strong>뿐만 아니라 <strong>"일상에서 자주 웃고(긍정적 감정), 덜 불안한 것(부정적 감정 완화)"</strong>이 함께 채워져야 합니다.<br><br>
+            한국인은 세계 최고 수준의 성취 덕에 머리로는 6점대로 평가하면서도, 치열한 비교 경쟁 때문에 <strong>마음속으로는 늘 만성적인 불안과 피로</strong>를 겪고 있습니다. 
+            따라서 행복을 높이려면 단순 소득 증대를 넘어, <strong>실패해도 괜찮다는 '심리적 안전감'과 일상 속에서 편안함과 즐거움을 느낄 수 있는 사회문화적 환경</strong>이 절실합니다.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: 레퍼런스 매트릭스 -->
+    <section class="slide" data-index="6">
+      <span class="slide-tag">BIBLIOGRAPHY &amp; REFERENCES</span>
+      <h2 class="slide-title">문헌 및 공식 데이터 레퍼런스 매트릭스</h2>
+      <p class="slide-subtitle">
+        본 분석의 학술적 엄밀성을 뒷받침하는 핵심 출처 및 선행 연구 아카이브 (클릭 시 상세 모달 오픈)
+      </p>
+
+      <div class="grid-2">
+        <div class="card" onclick="openRefModal('REF-01')" style="cursor: pointer;">
+          <div class="card-header">
+            <span class="card-title"><span class="ref-badge">[REF-01]</span> UN World Happiness Report 2026</span>
+            <span class="card-badge badge-blue">Official Report</span>
+          </div>
+          <p>Helliwell et al. (2026). 글로벌 143개국 행복 평가(Cantril Ladder) 및 6대 기여 요인 공식 데이터셋.</p>
+        </div>
+
+        <div class="card" onclick="openRefModal('REF-02')" style="cursor: pointer;">
+          <div class="card-header">
+            <span class="card-title"><span class="ref-badge">[REF-02]</span> 통계청 「국민 삶의 질 2024~2025」</span>
+            <span class="card-badge badge-emerald">KOSTAT</span>
+          </div>
+          <p>통계청 통계개발원. 고용, 여가, 공동체, 가족, 신뢰도 등 71개 한국형 삶의 질 지표 종합 보고서.</p>
+        </div>
+
+        <div class="card" onclick="openRefModal('REF-03')" style="cursor: pointer;">
+          <div class="card-header">
+            <span class="card-title"><span class="ref-badge">[REF-03]</span> Does Economic Growth Improve the Human Lot?</span>
+            <span class="card-badge badge-amber">Easterlin (1974)</span>
+          </div>
+          <p>Richard Easterlin. 소득이 일정 수준을 넘어서면 행복이 지속 증가하지 않는다는 '이스털린의 역설' 원전.</p>
+        </div>
+
+        <div class="card" onclick="openRefModal('REF-04')" style="cursor: pointer;">
+          <div class="card-header">
+            <span class="card-title"><span class="ref-badge">[REF-04]</span> Flourish &amp; PERMA Model</span>
+            <span class="card-badge badge-indigo">Seligman (2011)</span>
+          </div>
+          <p>Martin Seligman. 긍정 정서(P), 몰입(E), 관계(R), 의미(M), 성취(A) 5대 차원 모델 (한국의 성취 과잉 및 관계/정서 결핍 설명).</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Bottom Navigation -->
+  <footer class="deck-footer">
+    <div class="slide-dots" id="slideDots"></div>
+    <div class="nav-controls">
+      <span class="counter-text" id="slideCounter">1 / 7</span>
+      <button class="btn-nav" id="prevBtn" title="이전 슬라이드 (←)">&larr;</button>
+      <button class="btn-nav" id="nextBtn" title="다음 슬라이드 (→)">&rarr;</button>
+    </div>
+  </footer>
+
+  <!-- Reference Modal -->
+  <div class="modal-overlay" id="refModal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeRefModal()">&times;</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <script>
+    // State
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    const progressBar = document.getElementById('progressBar');
+    const slideCounter = document.getElementById('slideCounter');
+    const slideDotsContainer = document.getElementById('slideDots');
+    const ambientGlow = document.getElementById('ambientGlow');
+
+    // Glow Colors per slide theme (7 slides)
+    const glowColors = [
+      'rgba(56, 189, 248, 0.16)',
+      'rgba(251, 113, 133, 0.16)',
+      'rgba(56, 189, 248, 0.16)',
+      'rgba(129, 140, 248, 0.16)',
+      'rgba(52, 211, 153, 0.16)',
+      'rgba(129, 140, 248, 0.16)',
+      'rgba(251, 191, 36, 0.16)'
+    ];
+
+    // Reference Database
+    const referencesDB = {
+      'REF-01': {
+        title: 'World Happiness Report 2026 (WHR 2026)',
+        authors: 'Helliwell, J. F., Layard, R., Sachs, J. D., De Neve, J.-E., Aknin, L. B., & Wang, S. (Eds.)',
+        publisher: 'UN Sustainable Development Solutions Network (SDSN)',
+        year: 2026,
+        location: 'references/WHR26.pdf & data/raw/WHR26_Data_Figure_2.1.xlsx',
+        summary: '전 세계 143개국의 주관적 안녕감(Life evaluation: Cantril Ladder)과 6대 설명 요인(1인당 GDP, 사회적 지지, 건강 기대수명, 삶의 선택의 자유, 관대함, 부패 인식)을 분석한 대표적 글로벌 보고서. 한국은 2025년 기준 6.040점(67위) 기록.'
+      },
+      'REF-02': {
+        title: '통계청 「국민 삶의 질 2024~2025」',
+        authors: '통계청 통계개발원',
+        publisher: '대한민국 정부 통계청',
+        year: '2024–2025',
+        location: '국가통계포털(KOSIS) 및 통계개발원 보고서',
+        summary: '고용, 임금, 건강, 교육, 여가, 환경, 안전, 공동체, 시민참여, 가족 등 11개 영역 71개 지표 종합 측정. 물질적 지표 대비 대인신뢰도(20%대)와 공동체 소속감의 지속적 저하가 한국 사회의 주요 병목으로 지적됨.'
+      },
+      'REF-03': {
+        title: 'Does Economic Growth Improve the Human Lot? Some Empirical Evidence',
+        authors: 'Richard A. Easterlin',
+        publisher: 'Nations and Households in Economic Growth (Academic Press)',
+        year: 1974,
+        location: 'Academic Literature',
+        summary: '유명한 "이스털린의 역설(Easterlin Paradox)"을 제안한 고전 논문. 국가 내에서 고소득층이 저소득층보다 행복하지만, 국가 전체의 소득이 일정 수준을 넘어서면 소득 증가가 국가 전체의 행복 증진으로 이어지지 않는다는 실증적 발견.'
+      },
+      'REF-04': {
+        title: 'Flourish: A Visionary New Understanding of Happiness and Well-being (PERMA Model)',
+        authors: 'Martin E. P. Seligman',
+        publisher: 'Free Press / Simon & Schuster',
+        year: 2011,
+        location: 'Academic Literature',
+        summary: '웰빙을 5가지 독립적 차원(Positive Emotion, Engagement, Relationships, Meaning, Accomplishment)으로 정의. 한국인의 경우 성취(A)는 세계 최고 수준이나 관계(R)와 긍정정서(P)의 결핍이 두드러짐.'
+      }
+    };
+
+    // Initialize Dots
+    function initDots() {
+      slideDotsContainer.innerHTML = '';
+      slides.forEach((_, idx) => {
+        const dot = document.createElement('div');
+        dot.className = `dot ${idx === currentSlide ? 'active' : ''}`;
+        dot.addEventListener('click', () => goToSlide(idx));
+        slideDotsContainer.appendChild(dot);
+      });
+    }
+
+    // Go to specific slide
+    function goToSlide(index) {
+      if (index < 0 || index >= totalSlides) return;
+      
+      slides[currentSlide].classList.remove('active');
+      currentSlide = index;
+      slides[currentSlide].classList.add('active');
+
+      // Update UI controls
+      const progress = ((currentSlide + 1) / totalSlides) * 100;
+      progressBar.style.width = `${progress}%`;
+      slideCounter.textContent = `${currentSlide + 1} / ${totalSlides}`;
+
+      // Update Dots
+      const dots = document.querySelectorAll('.dot');
+      dots.forEach((dot, idx) => {
+        dot.classList.toggle('active', idx === currentSlide);
+      });
+
+      // Update Ambient Glow
+      ambientGlow.style.background = `radial-gradient(circle, ${glowColors[currentSlide]} 0%, rgba(129, 140, 248, 0.05) 50%, transparent 70%)`;
+    }
+
+    // Slide 3 View Toggle
+    function switchSlide3View(mode) {
+      const tableView = document.getElementById('slide3TableView');
+      const chartView = document.getElementById('slide3ChartView');
+      const btnTable = document.getElementById('btnViewTable');
+      const btnChart = document.getElementById('btnViewChart');
+
+      if (mode === 'chart') {
+        tableView.style.display = 'none';
+        chartView.style.display = 'block';
+        btnChart.style.background = 'rgba(56, 189, 248, 0.2)';
+        btnChart.style.color = '#fff';
+        btnTable.style.background = 'rgba(255, 255, 255, 0.06)';
+        btnTable.style.color = 'var(--text-muted)';
+      } else {
+        tableView.style.display = 'block';
+        chartView.style.display = 'none';
+        btnTable.style.background = 'rgba(56, 189, 248, 0.2)';
+        btnTable.style.color = '#fff';
+        btnChart.style.background = 'rgba(255, 255, 255, 0.06)';
+        btnChart.style.color = 'var(--text-muted)';
+      }
+    }
+
+    // Navigation triggers
+    document.getElementById('prevBtn').addEventListener('click', () => goToSlide(currentSlide - 1));
+    document.getElementById('nextBtn').addEventListener('click', () => goToSlide(currentSlide + 1));
+
+    // Keyboard Shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (document.getElementById('refModal').classList.contains('open')) {
+        if (e.key === 'Escape') closeRefModal();
+        return;
+      }
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
+        goToSlide(currentSlide + 1);
+      } else if (e.key === 'ArrowLeft') {
+        goToSlide(currentSlide - 1);
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullscreen();
+      } else if (e.key.toLowerCase() === 'r') {
+        openRefModal('all');
+      }
+    });
+
+    // Fullscreen Toggle
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => console.log(err));
+      } else {
+        document.exitFullscreen().catch(err => console.log(err));
+      }
+    }
+
+    // Modal Control
+    function openRefModal(refId) {
+      const modal = document.getElementById('refModal');
+      const content = document.getElementById('modalContent');
+      
+      if (refId === 'all') {
+        let html = `<h2 style="font-size: 1.5rem; color: #fff; margin-bottom: 20px; font-weight: 800;">📚 프로젝트 서지 및 문헌 아카이브</h2>`;
+        html += `<div style="display: flex; flex-direction: column; gap: 16px;">`;
+        for (const [key, item] of Object.entries(referencesDB)) {
+          html += `
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+                <span style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent-indigo); font-weight: bold;">[${key}]</span>
+                <span style="font-size: 0.78rem; color: var(--text-muted);">${item.year} &middot; ${item.publisher}</span>
+              </div>
+              <h3 style="font-size: 1.05rem; color: #fff; margin-bottom: 6px;">${item.title}</h3>
+              <p style="font-size: 0.82rem; color: var(--accent-blue); margin-bottom: 8px;">저자: ${item.authors}</p>
+              <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5;">${item.summary}</p>
+            </div>
+          `;
+        }
+        html += `</div>`;
+        content.innerHTML = html;
+      } else if (referencesDB[refId]) {
+        const item = referencesDB[refId];
+        content.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+            <span class="ref-badge" style="font-size: 0.9rem;">${refId}</span>
+            <span style="font-size: 0.85rem; color: var(--text-muted); font-family: var(--font-mono);">${item.publisher} (${item.year})</span>
+          </div>
+          <h2 style="font-size: 1.45rem; color: #fff; margin-bottom: 10px; font-weight: 800; line-height: 1.3;">${item.title}</h2>
+          <div style="font-size: 0.88rem; color: var(--accent-blue); margin-bottom: 14px;"><strong>저자:</strong> ${item.authors}</div>
+          <div style="background: rgba(255,255,255,0.04); border-radius: 10px; padding: 14px; margin-bottom: 16px; border: 1px solid var(--border-color);">
+            <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 6px; font-family: var(--font-mono);">KEY SUMMARY &amp; INSIGHT</div>
+            <p style="font-size: 0.92rem; color: #e2e8f0; line-height: 1.6;">${item.summary}</p>
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-mono);">
+            📁 로컬 위치/식별자: <code>${item.location}</code>
+          </div>
+        `;
+      }
+      modal.classList.add('open');
+    }
+
+    function closeRefModal() {
+      document.getElementById('refModal').classList.remove('open');
+    }
+
+    document.getElementById('refModal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('refModal')) closeRefModal();
+    });
+
+    // Init on load
+    initDots();
+    goToSlide(0);
+  </script>
 </body>
 </html>
